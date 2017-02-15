@@ -1,7 +1,3 @@
-//ANIMATION PROPERTIES
-SCP_STILL = 500; // Sprite Change Period, ms
-SCP_WALK = 50;
-
 //WORLD PROPERTIES
 W_WIDTH = 400;
 W_HEIGHT = 225;
@@ -16,7 +12,7 @@ JUMP_SPEED = 10;
 JUMP_FADE_SPEED = 1;
 
 //CONTROLS
-command_keys = [32];    // ' '
+attack_keys = [32];    // ' '
 
 up_keys = [87, 38];     // 'w'
 left_keys = [65, 37];   // 'a'

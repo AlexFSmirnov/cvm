@@ -7,24 +7,23 @@ function drawBackground() {
 }
 
 function drawPlayer() {
-    if (cur_action == 'still') {
-        if (Date.now() - prev_sprite_change > SCP_STILL) {
-            cur_cat_still = (cur_cat_still + 1) % 2;
-            prev_sprite_change = Date.now();   
-        }
-        cur_image = cats_still[cur_cat_still];
-    } else if (cur_action == 'walk') {
-        console.log(cur_cat_walk);
-        if (Date.now() - prev_sprite_change > SCP_WALK) {
-            cur_cat_walk = (cur_cat_walk + 1) % 4;
-            prev_sprite_change = Date.now();   
-        }
-        cur_image = cats_walk[cur_cat_walk];
-    } else if (cur_action == 'jump') {
-        cur_image = cat_jump;
+    var scp = cat_sprites[cur_action]['scp'];
+    var prev_change = cat_sprites[cur_action]['prev_change'];
+    if (Date.now() - prev_change > scp) {
+        cat_sprites[cur_action]['prev_change'] = Date.now();
+        cat_sprites[cur_action]['cur'] += 1;
+        cat_sprites[cur_action]['cur'] %= cat_sprites[cur_action]['all'];
+    }
+    cur_x = (cat_sprites[cur_action]['x'] + cat_sprites[cur_action]['cur'] * 
+                                                                       P_WIDTH);
+    cur_y = cat_sprites[cur_action]['y'];
+    if (cur_direction == 'left') {
+        cur_y += P_HEIGHT;
+        cur_x = 96 - cur_x;
     }
 
-    ctx.drawImage(cur_image, player_x, player_y, P_WIDTH, P_HEIGHT);
+    ctx.drawImage(cat_sprites['image'], cur_x, cur_y, P_WIDTH, P_HEIGHT,
+                        player_x, player_y, P_WIDTH, P_HEIGHT);
 }
 
 function playerFall() {
@@ -33,7 +32,9 @@ function playerFall() {
 }
 
 function main() {
-    if (player_y != GROUND_LEVEL - P_HEIGHT) {
+    if (isPressed(attack_keys)) {
+        cur_action = 'attack';
+    } else if (player_y != GROUND_LEVEL - P_HEIGHT) {
         cur_action = 'jump';
     } else if (isPressed(left_keys) || isPressed(right_keys)) {
         cur_action = 'walk';
@@ -43,9 +44,11 @@ function main() {
 
     if (isPressed(left_keys)) {
         player_x = Math.max(player_x - P_SPEED, 0);
+        cur_direction = 'left';
     } 
     if (isPressed(right_keys)) {
         player_x = Math.min(player_x + P_SPEED, W_WIDTH - P_WIDTH);
+        cur_direction = 'right';
     } 
     if (isPressed(up_keys) && player_y == GROUND_LEVEL - P_HEIGHT) {
         cur_jump = JUMP_SPEED;
@@ -83,6 +86,7 @@ $(document).ready(function(){
     player_y = GROUND_LEVEL - P_HEIGHT;
     cur_jump = 0;
     cur_action = 'walk';
+    cur_direction = 'right';
 
     prepareSprites();
 
@@ -97,22 +101,4 @@ function adjustWindow() {
     } else {
         document.getElementById("canvas").style = "width: " + c_width + "px";
     }
-}
-
-function prepareSprites() {
-    prev_sprite_change = Date.now();
-
-    cat_still_1 = new Image(); cat_still_1.src = "images/cat_still_1.gif";
-    cat_still_2 = new Image(); cat_still_2.src = "images/cat_still_2.gif";
-    cats_still = [cat_still_1, cat_still_2];
-    cur_cat_still = 1;
-
-    cat_walk_1 = new Image(); cat_walk_1.src = "images/cat_walk_1.gif";
-    cat_walk_2 = new Image(); cat_walk_2.src = "images/cat_walk_2.gif";
-    cat_walk_3 = new Image(); cat_walk_3.src = "images/cat_walk_3.gif";
-    cat_walk_4 = new Image(); cat_walk_4.src = "images/cat_walk_4.gif";
-    cats_walk = [cat_walk_1, cat_walk_2, cat_walk_3, cat_walk_4];
-    cur_cat_walk = 3;
-
-    cat_jump = new Image(); cat_jump.src = "images/cat_jump.gif";
 }
