@@ -69,14 +69,13 @@ $(document).ready(function(){
     keys_pressed = [];
     window.onkeydown = function(e) {keys_pressed[e.keyCode]=true;}
     window.onkeyup = function(e) {keys_pressed[e.keyCode]=false;}
+    window.addEventListener('resize', adjustWindow, true);
+    adjustWindow();
 
     GROUND_LEVEL = W_HEIGHT - GROUND_LEVEL;
     JUMP_SPEED += GRAVITY;
 
     var canvas = document.getElementById('canvas');
-    canvas.width = W_WIDTH;
-    canvas.height = W_HEIGHT;
-
     ctx = canvas.getContext('2d');
 
 
@@ -86,8 +85,19 @@ $(document).ready(function(){
     cur_action = 'walk';
 
     prepareSprites();
+
     main();
 });
+
+function adjustWindow() {
+    var c_width = document.documentElement.clientWidth;
+    var c_height = document.documentElement.clientHeight;
+    if (c_width / c_height > 16 / 9) {
+        document.getElementById("canvas").style = "height: " + c_height + "px";
+    } else {
+        document.getElementById("canvas").style = "width: " + c_width + "px";
+    }
+}
 
 function prepareSprites() {
     prev_sprite_change = Date.now();
