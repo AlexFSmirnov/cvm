@@ -57,7 +57,7 @@ function main() {
 
     drawBackground();
     drawPlayer();
-    setTimeout(main, 30);
+    setTimeout(main, 1000 / FPS);
 }
 
 function isPressed(keys) {
