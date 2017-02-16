@@ -15,6 +15,7 @@ P_HEIGHT = 32;
 JUMP_SPEED = 8;
 JUMP_FADE_SPEED = 0.5;
 ATTACK_PERIOD = 500;
+ATTACK_LENGTH = 8;
 
 //CONTROLS
 attack_keys = [32];    // ' '

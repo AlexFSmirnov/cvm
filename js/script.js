@@ -25,7 +25,7 @@ function drawPlayer() {
 function attack() {
     new_fireball = {
         'x': player_x,
-        'y': player_y + P_HEIGHT / 2,
+        'y': player_y + P_HEIGHT / 2 - 5,
         'dir': cur_direction,
         'is_alive': true
     }
@@ -72,14 +72,22 @@ function playerFall() {
     cur_jump = Math.max(cur_jump - JUMP_FADE_SPEED, 0);
 }
 
-function main() {
-    console.log(fireballs);
+function check_pressed(e) {
     if (isPressed(attack_keys)) {
         cur_action = 'attack';
         if (Date.now() - prev_attack >= ATTACK_PERIOD) {
             prev_attack = Date.now();
+            did_attack = ATTACK_LENGTH;
             attack();
         }
+    }
+}
+
+function main() {
+    console.log(fireballs);
+    if (did_attack) {
+        did_attack -= 1;
+        cur_action = 'attack';
     } else if (player_y != GROUND_LEVEL - P_HEIGHT) {
         cur_action = 'jump';
     } else if (isPressed(left_keys) || isPressed(right_keys)) {
@@ -119,6 +127,7 @@ $(document).ready(function(){
     keys_pressed = [];
     window.onkeydown = function(e) {keys_pressed[e.keyCode]=true;}
     window.onkeyup = function(e) {keys_pressed[e.keyCode]=false;}
+    window.onkeypress = function(e) {check_pressed(e);}
     window.addEventListener('resize', adjustWindow, true);
     adjustWindow();
 
@@ -137,6 +146,7 @@ $(document).ready(function(){
     cur_jump = 0;
     cur_action = 'walk';
     cur_direction = 'right';
+    did_attack = 0;
 
     prev_attack = Date.now();
     fireballs = [];
