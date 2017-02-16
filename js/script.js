@@ -22,14 +22,64 @@ function drawPlayer() {
                         player_x, player_y, P_WIDTH, P_HEIGHT);
 }
 
+function attack() {
+    new_fireball = {
+        'x': player_x,
+        'y': player_y + P_HEIGHT / 2,
+        'dir': cur_direction,
+        'is_alive': true
+    }
+    if (cur_direction == 'right') new_fireball['x'] += P_WIDTH;
+    fireballs.push(new_fireball);
+}
+
+function drawFireball(fireball) {
+    ctx.fillStyle = "#FFA500";
+    ctx.fillRect(fireball['x'] - 5, fireball['y'] - 5, 10, 10);
+}
+
+function updateFireballs() {
+    // Updating fireballs' coordinaions
+    for (var i = 0; i < fireballs.length; i++) {
+        if (!fireballs[i]['is_alive']) continue;
+        var x = fireballs[i]['x'];
+        var y = fireballs[i]['y'];
+        var dir = fireballs[i]['dir'];
+        if (dir == 'right') {
+            if (x + FIREBALL_SPEED <= W_WIDTH) {
+                fireballs[i]['x'] += FIREBALL_SPEED;
+                drawFireball(fireballs[i]);
+            } else {
+                fireballs[i]['is_alive'] = false;
+            }
+        } else {
+            if (x - FIREBALL_SPEED >= 0) {
+                fireballs[i]['x'] -= FIREBALL_SPEED;
+                drawFireball(fireballs[i]);
+            } else {
+                fireballs[i]['is_alive'] = false;
+            }
+        }
+    }
+    // Removing 'dead' fireballs
+    while (fireballs.length > 0 && !fireballs[0]['is_alive']) {
+        fireballs.shift();
+    }
+}
+
 function playerFall() {
     player_y = Math.min(player_y + GRAVITY - cur_jump, GROUND_LEVEL - P_HEIGHT);
     cur_jump = Math.max(cur_jump - JUMP_FADE_SPEED, 0);
 }
 
 function main() {
+    console.log(fireballs);
     if (isPressed(attack_keys)) {
         cur_action = 'attack';
+        if (Date.now() - prev_attack >= ATTACK_PERIOD) {
+            prev_attack = Date.now();
+            attack();
+        }
     } else if (player_y != GROUND_LEVEL - P_HEIGHT) {
         cur_action = 'jump';
     } else if (isPressed(left_keys) || isPressed(right_keys)) {
@@ -52,6 +102,7 @@ function main() {
     playerFall();
 
     drawBackground();
+    updateFireballs();
     drawPlayer();
     setTimeout(main, 1000 / FPS);
 }
@@ -86,6 +137,9 @@ $(document).ready(function(){
     cur_jump = 0;
     cur_action = 'walk';
     cur_direction = 'right';
+
+    prev_attack = Date.now();
+    fireballs = [];
 
     prepareSprites();
 
