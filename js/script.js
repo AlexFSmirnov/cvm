@@ -1,9 +1,5 @@
 function drawBackground() {
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(0, 0, W_WIDTH, W_HEIGHT);
-
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0, GROUND_LEVEL, W_WIDTH, 1);
+    ctx.drawImage(background_image, 0, 0);
 }
 
 function drawPlayer() {
@@ -80,6 +76,9 @@ $(document).ready(function(){
 
     var canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
+
+    background_image = new Image();
+    background_image.src = "images/background.png";
 
 
     player_x = Math.round(W_WIDTH / 2);
